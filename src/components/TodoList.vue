@@ -1,7 +1,7 @@
 <template>
   <section>
      <ul>
-       <li v-for="(todoItem, index) in propsdata" class="shadow" v-bind:key="todoItem.item">
+       <li v-for="(todoItem, index) in this.storedTodoItems" class="shadow" v-bind:key="todoItem.item">
          <i class="checkBtn fas fa-check" v-bind:class="{checkBtnCompleted: todoItem.completed}" v-on:click="toggleComplete(todoItem, index)"></i>
          <span v-bind:class="{textCompleted: todoItem.completed}">{{ todoItem.item }}</span>
          <span class="removeBtn" v-on:click="removeTodo(todoItem, index)">
@@ -15,13 +15,18 @@
 
 <script>
 export default {
-  props : ['propsdata'],
-  methods: { 
-    removeTodo: function (todoItem, index) {
-      this.$emit('removeItem', todoItem, index);
+  methods: {
+    removeTodo(todoItem, index) {
+      this.$store.commit('removeOneItem', {todoItem, index});
     },
-    toggleComplete: function (todoItem, index) {
-      this.$emit('toggleItem', todoItem, index)
+    toggleComplete(todoItem, index) {
+      //this.$emit('toggleItem', todoItem, index)
+      this.$store.commit('toggleOneItem', {todoItem, index});
+    }
+  },
+  computed:{
+    storedTodoItems(){
+      return this.$store.getters.getTodoItems;
     }
   }
 }

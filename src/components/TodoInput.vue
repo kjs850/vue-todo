@@ -1,29 +1,51 @@
 <template>
   <div class="inputBox shadow">
-    <input type="text" v-model="newTodoItem">
+    <input type="text" v-model="newTodoItem" @keyup.enter="addTodo">
       <span class="addContainer" v-on:click="addTodo">
         <i class="addBtn fas fa-plus" aria-hidden="true"></i>
       </span>
+
+    <Modal v-if="showModal" @close="showModal = false">
+      <h3 slot="header">
+        경고
+        <i class="closeModalBtn fa fa-times"
+           aria-hidden="true"
+           @click="showModal = false">
+        </i>
+      </h3>
+      <p slot="body">할 일을 입력하세요.</p>
+    </Modal>
+
   </div>
 </template>
 
 <script>
+import Modal from './common/Modal.vue'
+
 export default {
   data: function () {
     return {
-      newTodoItem: ''
+      newTodoItem: '',
+      showModal: false
     }
   },
   methods: {
-    addTodo: function () {
+    addTodo() {
       if (this.newTodoItem !== '') {
-        this.$emit('addItem', this.newTodoItem);
+        const item = this.newTodoItem.trim();
+        //this.$emit('addItem', item);
+        this.$store.commit('addOneItem', item);
         this.clearInput();
+      }else{
+        this.showModal = !this.showModal;
       }
     },
-    clearInput: function () {
+    clearInput() {
       this.newTodoItem = '';
     }
+  },
+  components: {
+    Modal : Modal
   }
 }
 </script>
